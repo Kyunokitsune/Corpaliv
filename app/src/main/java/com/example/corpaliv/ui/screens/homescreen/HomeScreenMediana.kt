@@ -1,4 +1,4 @@
-package com.example.corpaliv.ui.screens
+package com.example.corpaliv.ui.screens.homescreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -19,16 +19,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.corpaliv.R
 
 
-@Preview(name = "Vista Compacta (Teléfono)", widthDp = 360, heightDp = 800, showBackground = true)
+@Preview(name = "Vista Mediana (Tableta)", widthDp = 700, heightDp = 800, showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenCompacta (){
+fun HomeScreenMediana (){
     Scaffold(
         topBar = {
-            TopAppBar(title = {Text("CORPALIV Compacto APP")})
+            TopAppBar(title = {Text("CORPALIV Mediano APP")})
         }
     ){innerPadding ->
         Column(

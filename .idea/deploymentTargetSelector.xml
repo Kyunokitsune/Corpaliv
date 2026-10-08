@@ -4,21 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-10-04T21:31:12.194908500Z">
+        <DropdownSelection timestamp="2026-10-08T00:35:23.396549900Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\valde\.android\avd\Medium_Desktop.avd" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="MainActivity">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-10-04T22:20:57.382650400Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\valde\.android\avd\Large_Desktop.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\av-alumno\.android\avd\Medium_Desktop.avd" />
             </handle>
           </Target>
         </DropdownSelection>
