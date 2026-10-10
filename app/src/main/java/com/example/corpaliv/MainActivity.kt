@@ -4,9 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.corpaliv.navigation.Screen
 import com.example.corpaliv.ui.screens.HomeScreen
+import com.example.corpaliv.ui.screens.InfoScreen
 import com.example.corpaliv.ui.theme.CorpalivTheme
 
 
@@ -17,15 +20,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CorpalivTheme {
-                HomeScreen()
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.Home.route
+                ) {
+                    composable(Screen.Home.route) {
+                        HomeScreen(navController = navController)
+                    }
+                    composable(Screen.Info.route) {
+                        InfoScreen()
+                    }
+                }
+
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun Prevista() {
-    CorpalivTheme{ HomeScreen()}
-    
 }

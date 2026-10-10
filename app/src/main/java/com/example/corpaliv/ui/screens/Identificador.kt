@@ -2,6 +2,7 @@ package com.example.corpaliv.ui.screens
 
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import com.example.corpaliv.ui.screens.homescreen.HomeScreenCompacta
 import com.example.corpaliv.ui.screens.homescreen.HomeScreenExpandida
 import com.example.corpaliv.ui.screens.homescreen.HomeScreenMediana
@@ -11,10 +12,10 @@ import com.example.corpaliv.ui.screens.informacion.InfoScreenExpandida
 import com.example.corpaliv.ui.utils.obtenerWindowSizeClass
 
 @Composable
-fun HomeScreen(){
+fun HomeScreen(navController: NavController){
     val windowSizeClass = obtenerWindowSizeClass()
     when (windowSizeClass.widthSizeClass){
-        WindowWidthSizeClass.Compact -> HomeScreenCompacta()
+        WindowWidthSizeClass.Compact -> HomeScreenCompacta(navController = navController)
         WindowWidthSizeClass.Medium -> HomeScreenMediana()
         WindowWidthSizeClass.Expanded -> HomeScreenExpandida()
 
