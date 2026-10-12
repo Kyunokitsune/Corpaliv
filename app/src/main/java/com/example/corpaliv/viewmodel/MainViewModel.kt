@@ -1,10 +1,9 @@
 package com.example.corpaliv.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.corpaliv.navigation.NavigationEvent
 import com.example.corpaliv.navigation.Screen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,19 +15,19 @@ class MainViewModel : ViewModel() {
     val navigationEvents: SharedFlow<NavigationEvent> = _navigationEvents.asSharedFlow()
 
     fun navigateTo(screen: Screen) {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             _navigationEvents.emit(NavigationEvent.NavigateTo(route = screen))
         }
     }
 
     fun navigateBack() {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             _navigationEvents.emit(NavigationEvent.PopBackStack)
         }
     }
 
     fun navigateUp() {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             _navigationEvents.emit(NavigationEvent.NavigateUp)
         }
     }

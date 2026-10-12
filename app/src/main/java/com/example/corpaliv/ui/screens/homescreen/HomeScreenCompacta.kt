@@ -23,9 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.corpaliv.navigation.Screen
 import com.example.corpaliv.viewmodel.MainViewModel
@@ -37,7 +35,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreenCompacta (
     navController: NavController,
-    viewModel: MainViewModel = viewModel()
+    viewModel: MainViewModel
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -47,6 +45,13 @@ fun HomeScreenCompacta (
         drawerContent = {
             ModalDrawerSheet {
                 Text("Menu", modifier = Modifier.padding(16.dp))
+                NavigationDrawerItem(
+                    label = { Text("Home Screen") },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                    }
+                )
                 NavigationDrawerItem(
                     label = { Text("¿Quienes somos?") },
                     selected = false,

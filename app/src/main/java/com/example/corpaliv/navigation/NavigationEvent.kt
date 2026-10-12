@@ -8,8 +8,8 @@ sealed class NavigationEvent {
         val singleTop: Boolean = false
     ) : NavigationEvent()
 
-    object  PopBackStack : NavigationEvent()
+    data object PopBackStack : NavigationEvent()
 
-    object NavigateUp : NavigationEvent()
+    data object NavigateUp : NavigationEvent()
 
 }

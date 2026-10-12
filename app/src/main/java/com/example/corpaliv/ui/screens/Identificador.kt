@@ -10,25 +10,38 @@ import com.example.corpaliv.ui.screens.informacion.InfoScreenCompacta
 import com.example.corpaliv.ui.screens.informacion.InfoScreenMediana
 import com.example.corpaliv.ui.screens.informacion.InfoScreenExpandida
 import com.example.corpaliv.ui.utils.obtenerWindowSizeClass
+import com.example.corpaliv.viewmodel.MainViewModel
 
 @Composable
-fun HomeScreen(navController: NavController){
+fun HomeScreen(navController: NavController, viewModel: MainViewModel){
     val windowSizeClass = obtenerWindowSizeClass()
     when (windowSizeClass.widthSizeClass){
-        WindowWidthSizeClass.Compact -> HomeScreenCompacta(navController = navController)
-        WindowWidthSizeClass.Medium -> HomeScreenMediana()
-        WindowWidthSizeClass.Expanded -> HomeScreenExpandida()
+        WindowWidthSizeClass.Compact -> HomeScreenCompacta(
+            navController = navController,
+            viewModel = viewModel)
+        WindowWidthSizeClass.Medium -> HomeScreenMediana(
+            navController = navController,
+            viewModel = viewModel)
+        WindowWidthSizeClass.Expanded -> HomeScreenExpandida(
+            navController = navController,
+            viewModel = viewModel)
 
 
     }
 }
 
 @Composable
-fun InfoScreen(){
+fun InfoScreen(navController: NavController, viewModel: MainViewModel){
     val windowSizeClass = obtenerWindowSizeClass()
     when (windowSizeClass.widthSizeClass){
-        WindowWidthSizeClass.Compact -> InfoScreenCompacta()
-        WindowWidthSizeClass.Medium -> InfoScreenMediana()
-        WindowWidthSizeClass.Expanded -> InfoScreenExpandida()
+        WindowWidthSizeClass.Compact -> InfoScreenCompacta(
+            navController = navController,
+            viewModel = viewModel)
+        WindowWidthSizeClass.Medium -> InfoScreenMediana(
+            navController = navController,
+            viewModel = viewModel)
+        WindowWidthSizeClass.Expanded -> InfoScreenExpandida(
+            navController = navController,
+            viewModel = viewModel)
     }
 }
