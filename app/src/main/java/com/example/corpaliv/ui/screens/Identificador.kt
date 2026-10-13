@@ -3,12 +3,15 @@ package com.example.corpaliv.ui.screens
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import com.example.corpaliv.ui.screens.contactoscreen.ContactoScreenCompacto
+import com.example.corpaliv.ui.screens.contactoscreen.ContactoScreenExpandida
 import com.example.corpaliv.ui.screens.homescreen.HomeScreenCompacta
 import com.example.corpaliv.ui.screens.homescreen.HomeScreenExpandida
 import com.example.corpaliv.ui.screens.homescreen.HomeScreenMediana
 import com.example.corpaliv.ui.screens.informacion.InfoScreenCompacta
 import com.example.corpaliv.ui.screens.informacion.InfoScreenMediana
 import com.example.corpaliv.ui.screens.informacion.InfoScreenExpandida
+import com.example.corpaliv.ui.screens.contactoscreen.ContactoScreenMediana
 import com.example.corpaliv.ui.utils.obtenerWindowSizeClass
 import com.example.corpaliv.viewmodel.MainViewModel
 
@@ -43,5 +46,21 @@ fun InfoScreen(navController: NavController, viewModel: MainViewModel){
         WindowWidthSizeClass.Expanded -> InfoScreenExpandida(
             navController = navController,
             viewModel = viewModel)
+    }
+}
+@Composable
+fun ContactoScreen(navController: NavController, viewModel: MainViewModel){
+    val windowSizeClass = obtenerWindowSizeClass()
+    when (windowSizeClass.widthSizeClass){
+        WindowWidthSizeClass.Compact -> ContactoScreenCompacto(
+            navController = navController,
+            viewModel = viewModel)
+        WindowWidthSizeClass.Medium -> ContactoScreenMediana(
+            navController = navController,
+            viewModel = viewModel)
+        WindowWidthSizeClass.Expanded -> ContactoScreenExpandida(
+            navController = navController,
+            viewModel = viewModel)
+
     }
 }

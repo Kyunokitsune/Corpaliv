@@ -59,12 +59,20 @@ fun HomeScreenMediana (
                             viewModel.navigateTo(Screen.Info)
                         }
                     )
+                    NavigationDrawerItem(
+                        label = { Text("Contacto") },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            viewModel.navigateTo(Screen.Contact)
+                        }
+                    )
                 }
             }
         ) {
             Scaffold(
                 topBar = {
-                    TopAppBar(title = {Text("CORPALIV Expandida APP")})
+                    TopAppBar(title = {Text("CORPALIV Mediana APP")})
                 }
             ){innerPadding ->
                 Column(

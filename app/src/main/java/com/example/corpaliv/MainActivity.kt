@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.corpaliv.navigation.NavigationEvent
 import com.example.corpaliv.navigation.Screen
+import com.example.corpaliv.ui.screens.ContactoScreen
 import com.example.corpaliv.ui.screens.HomeScreen
 import com.example.corpaliv.ui.screens.InfoScreen
 import com.example.corpaliv.ui.theme.CorpalivTheme
@@ -65,8 +66,13 @@ class MainActivity : ComponentActivity() {
                             viewModel = mainViewModel
                         )
                     }
+                    composable(Screen.Contact.route){
+                        ContactoScreen(
+                            navController= navController,
+                            viewModel= mainViewModel
+                        )
+                    }
                 }
-
             }
         }
     }

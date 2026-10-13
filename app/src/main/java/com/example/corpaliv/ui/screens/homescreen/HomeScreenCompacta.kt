@@ -60,6 +60,14 @@ fun HomeScreenCompacta (
                         viewModel.navigateTo(Screen.Info)
                     }
                 )
+                NavigationDrawerItem(
+                    label = { Text("Contacto") },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        viewModel.navigateTo(Screen.Contact)
+                    }
+                )
             }
         }
     ) {

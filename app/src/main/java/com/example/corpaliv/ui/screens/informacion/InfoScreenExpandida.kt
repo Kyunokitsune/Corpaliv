@@ -58,12 +58,20 @@ fun InfoScreenExpandida (
                         scope.launch { drawerState.close() }
                     }
                 )
+                NavigationDrawerItem(
+                    label = { Text("Contacto") },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        viewModel.navigateTo(Screen.Contact)
+                    }
+                )
             }
         }
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(title = {Text("CORPALIV Compacto APP")})
+                TopAppBar(title = {Text("CORPALIV Expandida APP")})
             }
         ){innerPadding ->
             Column(

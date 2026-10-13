@@ -57,6 +57,14 @@ fun InfoScreenCompacta (
                             scope.launch { drawerState.close() }
                         }
                     )
+                    NavigationDrawerItem(
+                        label = { Text("Contacto") },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            viewModel.navigateTo(Screen.Contact)
+                        }
+                    )
                 }
             }
         ) {
