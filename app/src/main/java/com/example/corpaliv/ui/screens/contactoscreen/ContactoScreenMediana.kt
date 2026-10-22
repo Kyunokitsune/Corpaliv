@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -93,11 +95,23 @@ fun ContactoScreenMediana(
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(space = 10.dp)
-            ){
+            )
+
+            {
+                Text(
+                    text = "Rellene con sus datos",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleLarge
+                )
+
 
                 //llamar a la funcion formulario
                 FormularioScreen()
 
+
+                Button(onClick = { /* accion futura */ }) {
+                    Text(text = "Enviar")
+                }
 
                 Image(
                     painter = painterResource(id = android.R.drawable.ic_menu_gallery),
