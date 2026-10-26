@@ -16,6 +16,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,14 +24,19 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.corpaliv.ui.utils.GeneradorExcel
+import com.example.corpaliv.ui.utils.ResultadoExcel
+import com.example.corpaliv.ui.utils.rememberGestorPermisosAlmacenamiento
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,16 +49,60 @@ fun FormularioScreen() {
     var numeroContacto by rememberSaveable { mutableStateOf("") }
     var comentario by rememberSaveable { mutableStateOf("") }
 
-    // Estado para controlar la visualización del mensaje de éxito
+    // Estado para controlar la visualización del resultado
     var mensajeEnviado by rememberSaveable { mutableStateOf(false) }
+    var rutaArchivoExcel by rememberSaveable { mutableStateOf("") }
+    var resultadoUltimoExcel by remember { mutableStateOf<ResultadoExcel?>(null) }
 
     val limiteComentario = 1000
     val limitenumtelefonico = 9
 
-
     // Listado de dominios permitidos
     val terminacionesPermitidas = listOf("@gmail.com", "@gmail.cl", "@duocuc.cl", "@duoc.cl")
     val esCorreoValido = correo.isEmpty() || terminacionesPermitidas.any { correo.lowercase().endsWith(it) }
+
+    // Función para procesar el guardado del archivo Excel
+    val ejecutarGuardadoExcel = {
+        val resultado = GeneradorExcel.guardarFormularioEnExcel(
+            context = context,
+            nombre = nombre,
+            correo = correo,
+            numeroContacto = numeroContacto,
+            comentario = comentario
+        )
+
+        if (resultado.exito) {
+            mensajeEnviado = true
+            rutaArchivoExcel = resultado.rutaArchivo
+            resultadoUltimoExcel = resultado
+
+            Toast.makeText(
+                context,
+                "Excel descargado en: ${resultado.rutaArchivo}",
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+            Toast.makeText(
+                context,
+                "Error al guardar Excel: ${resultado.mensajeError}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    // Gestor de permisos de almacenamiento
+    val solicitarPermisosYGuardar = rememberGestorPermisosAlmacenamiento(
+        onPermisosConcedidos = {
+            ejecutarGuardadoExcel()
+        },
+        onPermisosDenegados = {
+            Toast.makeText(
+                context,
+                "No se otorgaron permisos para guardar el archivo Excel",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    )
 
     Scaffold(
         topBar = {
@@ -68,7 +118,6 @@ fun FormularioScreen() {
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
 
-
             // 1. Campo Nombre
             OutlinedTextField(
                 value = nombre,
@@ -77,7 +126,6 @@ fun FormularioScreen() {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
-
 
             // 2. Campo Correo con validación de terminación
             OutlinedTextField(
@@ -98,12 +146,10 @@ fun FormularioScreen() {
                 }
             )
 
-
             // 3. Campo Número de contacto (Solo permite números)
             OutlinedTextField(
                 value = numeroContacto,
                 onValueChange = { nuevoTexto ->
-                    // Evalúa que solo sean números Y que no supere el límite
                     if (nuevoTexto.all { it.isDigit() } && nuevoTexto.length <= limitenumtelefonico) {
                         numeroContacto = nuevoTexto
                     }
@@ -112,7 +158,6 @@ fun FormularioScreen() {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                //  muestra cuántos números ha ingresado
                 supportingText = {
                     Text(
                         text = "${numeroContacto.length} / $limitenumtelefonico",
@@ -121,7 +166,6 @@ fun FormularioScreen() {
                     )
                 }
             )
-
 
             // 4. Campo Comentarios (Máximo 1000 caracteres)
             OutlinedTextField(
@@ -147,22 +191,13 @@ fun FormularioScreen() {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-
-            // Botón de Enviar
+            // Botón de Enviar y Descargar Excel
             Button(
                 onClick = {
                     val correoEsCorrecto = correo.isNotBlank() && terminacionesPermitidas.any { correo.lowercase().endsWith(it) }
 
                     if (nombre.isNotBlank() && correoEsCorrecto && numeroContacto.isNotBlank()) {
-                        mensajeEnviado = true
-
-                        val textoNotificacion = "Formulario enviado, nos pondremos en contacto a la brevedad con usted $nombre"
-
-                        Toast.makeText(
-                            context,
-                            textoNotificacion,
-                            Toast.LENGTH_LONG
-                        ).show()
+                        solicitarPermisosYGuardar()
                     } else {
                         val textoError = if (!correoEsCorrecto && correo.isNotBlank()) {
                             "El correo debe terminar en @gmail.com, @gmail.cl, @duocuc.cl o @duoc.cl"
@@ -179,11 +214,10 @@ fun FormularioScreen() {
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Enviar")
+                Text("Enviar y Descargar Excel")
             }
 
-
-            // Tarjeta de confirmación con el nombre dinámico
+            // Tarjeta de confirmación con el detalle de la descarga y la ruta del archivo
             if (mensajeEnviado) {
                 Card(
                     colors = CardDefaults.cardColors(
@@ -193,15 +227,54 @@ fun FormularioScreen() {
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 ) {
-                    Text(
-                        text = "Formulario enviado nos pondremos en contacto a la brevedad con usted $nombre",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center,
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
-                    )
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "¡Formulario enviado con éxito!",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+
+                        Text(
+                            text = "Gracias $nombre, nos pondremos en contacto a la brevedad.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = "📄 Archivo Excel generado y descargado en:",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+
+                        Text(
+                            text = rutaArchivoExcel,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+
+                        resultadoUltimoExcel?.let { res ->
+                            if (res.uri != null) {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                OutlinedButton(
+                                    onClick = {
+                                        GeneradorExcel.abrirArchivoExcel(context, res)
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text("Abrir archivo Excel")
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

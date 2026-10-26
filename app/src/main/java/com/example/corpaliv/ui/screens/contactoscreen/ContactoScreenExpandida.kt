@@ -1,5 +1,6 @@
 package com.example.corpaliv.ui.screens.contactoscreen
 
+import android.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -103,17 +103,11 @@ fun ContactoScreenExpandida(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-
                 //llamar a la funcion formulario
                 FormularioScreen()
 
-
-                Button(onClick = { /* accion futura */ }) {
-                    Text(text = "Enviar")
-                }
-
                 Image(
-                    painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                    painter = painterResource(id = R.drawable.ic_menu_gallery),
                     contentDescription = "Logo App",
                     modifier = Modifier
                         .fillMaxWidth()
