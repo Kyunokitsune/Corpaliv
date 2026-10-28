@@ -97,3 +97,23 @@ fun RegistrosScreen(navController: NavController, viewModel: MainViewModel) {
         )
     }
 }
+
+@Composable
+fun LoginScreen(navController: NavController, viewModel: MainViewModel) {
+    val windowSizeClass = obtenerWindowSizeClass()
+    when(windowSizeClass.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> LoginScreenCompacta(
+            navController = navController,
+            viewModel = viewModel
+        )
+        WindowWidthSizeClass.Medium -> LoginScreenMediana(
+            navController = navController,
+            viewModel = viewModel
+        )
+
+        WindowWidthSizeClass.Expanded -> LoginScreenExpandida(
+            navController = navController,
+            viewModel = viewModel
+        )
+    }
+}

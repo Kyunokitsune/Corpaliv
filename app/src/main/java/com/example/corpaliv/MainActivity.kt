@@ -105,6 +105,13 @@ class MainActivity : ComponentActivity() {
                             viewModel = mainViewModel
                         )
                     }
+
+                    composable(Screen.Login.route) {
+                        LoginScreen(
+                            navController = navController,
+                            viewModel = mainViewModel
+                        )
+                    }
                 }
 
                 // 5. Diálogo si se deniegan los permisos
