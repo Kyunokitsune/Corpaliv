@@ -1,19 +1,15 @@
 package com.example.corpaliv.ui.utils
 
-
-//coomo recordatiro, antes de agrgar el sizeclass se agrega la libreria al build.gradke.kts
-
+import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 
-
+// Calcula el tamaño de pantalla
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-
-fun obtenerWindowSizeClass(): WindowSizeClass{
-    return calculateWindowSizeClass(LocalActivity.current as android.app.Activity)
+fun obtenerWindowSizeClass(): WindowSizeClass {
+    return calculateWindowSizeClass(LocalActivity.current as Activity)
 }
-

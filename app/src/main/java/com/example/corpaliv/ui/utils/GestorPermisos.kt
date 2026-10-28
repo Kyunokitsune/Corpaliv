@@ -10,9 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
-// Gestor de permisos para almacenamiento.
-// Evalúa la API del sistema para solicitar únicamente los permisos vigentes según la versión de Android.
-// Ejecuta `onPermisosConcedidos` si se aceptan o no se requieren, y `onPermisosDenegados` si son rechazados.
+// Gestor de permisos para almacenamiento
 @Composable
 fun rememberGestorPermisosAlmacenamiento(
     onPermisosConcedidos: () -> Unit,
@@ -20,11 +18,11 @@ fun rememberGestorPermisosAlmacenamiento(
 ): () -> Unit {
     val context = LocalContext.current
 
-    // 1. Contrato de Compose para solicitar uno o varios permisos al sistema operativo
+    // Contrato para pedir permisos
     val launcherPermisos = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { resultados ->
-        // Evalúa si al menos uno o todos los permisos enviados fueron concedidos
+        // Evalúa si fueron concedidos
         val concedido = if (resultados.isEmpty()) false else resultados.values.any { it }
 
         if (concedido) {
@@ -36,11 +34,10 @@ fun rememberGestorPermisosAlmacenamiento(
         }
     }
 
-    // 2. Retorna la función ejecutable cuando se presione el botón deseado
+    // Lógica ejecutable de permisos
     return {
         when {
-            // Caso A: Android 13 (API 33) o superior
-            // Solicitamos permisos de lectura de medios granulares (READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_AUDIO).
+            // Android 13 o superior
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
                 val permisosAComprobar = mutableListOf(
                     Manifest.permission.READ_MEDIA_IMAGES,
@@ -48,7 +45,7 @@ fun rememberGestorPermisosAlmacenamiento(
                     Manifest.permission.READ_MEDIA_AUDIO
                 )
 
-                // En Android 14 (API 34) agregamos el permiso opcional de selección parcial
+                // Android 14 opcional
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                     permisosAComprobar.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
                 }
@@ -64,9 +61,7 @@ fun rememberGestorPermisosAlmacenamiento(
                 }
             }
 
-            // Caso B: Android 10 a Android 12 (API 29 a API 32)
-            // WRITE_EXTERNAL_STORAGE ya no es necesario por Scoped Storage.
-            // Evaluamos y solicitamos READ_EXTERNAL_STORAGE.
+            // Android 10 a 12
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
                 val permisoLectura = Manifest.permission.READ_EXTERNAL_STORAGE
                 val yaTienePermiso = ContextCompat.checkSelfPermission(
@@ -81,8 +76,7 @@ fun rememberGestorPermisosAlmacenamiento(
                 }
             }
 
-            // Caso C: Android 9 (API 28) o inferior
-            // Requiere tanto READ_EXTERNAL_STORAGE como WRITE_EXTERNAL_STORAGE.
+            // Android 9 o inferior
             else -> {
                 val permisoLectura = Manifest.permission.READ_EXTERNAL_STORAGE
                 val permisoEscritura = Manifest.permission.WRITE_EXTERNAL_STORAGE

@@ -33,15 +33,18 @@ import com.example.corpaliv.navigation.Screen
 import com.example.corpaliv.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 
+// Pantalla contacto versión compacta
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactoScreenCompacto(
     navController: NavController,
     viewModel: MainViewModel
-){
+) {
+    // Estado del menú lateral
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // Menú de navegación lateral
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -70,10 +73,20 @@ fun ContactoScreenCompacto(
                         scope.launch { drawerState.close() }
                     }
                 )
+                NavigationDrawerItem(
+                    label = { Text("Ver Registros") },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        viewModel.navigateTo(Screen.Registros)
+                    }
+                )
             }
         }
     ) {
+        // Estructura de la pantalla
         Scaffold(
+            // Barra superior con menú
             topBar = {
                 TopAppBar(
                     title = { Text("CORPALIV Compacto APP") },
@@ -87,24 +100,28 @@ fun ContactoScreenCompacto(
                             )
                         }
                     }
-                )            }
-        ){innerPadding ->
+                )
+            }
+        ) { innerPadding ->
+            // Contenedor principal de formulario
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(space = 10.dp)
-            ){
+            ) {
+                // Título de la sección
                 Text(
                     text = "Rellene con sus datos",
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                //llamar a la funcion formulario
-                FormularioScreen()
+                // Formulario de contacto interactivo
+                FormularioScreen(viewModel = viewModel)
 
+                // Imagen de pie de página
                 Image(
                     painter = painterResource(id = R.drawable.ic_menu_gallery),
                     contentDescription = "Logo App",
@@ -114,7 +131,6 @@ fun ContactoScreenCompacto(
                     contentScale = ContentScale.Fit
                 )
             }
-
         }
     }
 }

@@ -15,12 +15,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+// Genera archivos CSV para Excel
 object GeneradorExcel {
 
-    /**
-     * Genera un archivo CSV/Excel con los datos del formulario y lo guarda en la carpeta de Descargas.
-     * @return Objeto [ResultadoExcel] con la ruta del archivo y estado de la operación.
-     */
+    // Guarda el formulario en CSV
     fun guardarFormularioEnExcel(
         context: Context,
         nombre: String,
@@ -28,12 +26,12 @@ object GeneradorExcel {
         numeroContacto: String,
         comentario: String,
     ): ResultadoExcel {
+        // Formato fecha para archivo
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val fechaFormateada = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(Date())
         val nombreArchivo = "Formulario_Contacto_$timeStamp.csv"
 
-        // Formato CSV delimitado por punto y coma (;) compatible con Microsoft Excel en español
-        // e inclusión del BOM UTF-8 (\uFEFF) para correcta interpretación de caracteres especiales (tildes, ñ, etc.).
+        // Genera contenido CSV con BOM
         val contenidoCsv = buildString {
             append("\uFEFF")
             append("Nombre completo;Correo electrónico;Número de contacto;Comentarios;Fecha de envío\n")
@@ -45,8 +43,8 @@ object GeneradorExcel {
         }
 
         return try {
+            // Android 10 o superior
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // Android 10 (API 29) en adelante mediante MediaStore.Downloads
                 val values = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, nombreArchivo)
                     put(MediaStore.MediaColumns.MIME_TYPE, "text/csv")
@@ -69,7 +67,7 @@ object GeneradorExcel {
                     nombreArchivo = nombreArchivo
                 )
             } else {
-                // Android 9 (API 28) o inferior mediante acceso directo a la carpeta Downloads
+                // Android 9 o inferior
                 val directorioDescargas = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 if (!directorioDescargas.exists()) {
                     directorioDescargas.mkdirs()
@@ -105,9 +103,7 @@ object GeneradorExcel {
         }
     }
 
-    /**
-     * Permite abrir el archivo generado utilizando aplicaciones del sistema (Excel, Google Sheets, visor de archivos).
-     */
+    // Abre el archivo en sistema
     fun abrirArchivoExcel(context: Context, resultado: ResultadoExcel) {
         val uri = resultado.uri ?: return
         try {
@@ -122,11 +118,13 @@ object GeneradorExcel {
         }
     }
 
+    // Limpia comillas para CSV
     private fun limpiarTexto(texto: String): String {
-        return texto.replace("\"", "\"\"") // Escapa comillas dobles para CSV
+        return texto.replace("\"", "\"\"")
     }
 }
 
+// Resultado del proceso Excel
 data class ResultadoExcel(
     val exito: Boolean,
     val rutaArchivo: String = "",

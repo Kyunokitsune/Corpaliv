@@ -35,33 +35,43 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.corpaliv.ui.utils.GeneradorExcel
+import com.example.corpaliv.ui.utils.RegistroFormulario
 import com.example.corpaliv.ui.utils.ResultadoExcel
 import com.example.corpaliv.ui.utils.rememberGestorPermisosAlmacenamiento
+import com.example.corpaliv.viewmodel.MainViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
+// Formulario de contacto principal
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormularioScreen() {
+fun FormularioScreen(viewModel: MainViewModel? = null) {
     val context = LocalContext.current
 
-    // 1. rememberSaveable evita que la información se borre al girar o cambiar tamaño
+    // Estado del nombre ingresado
     var nombre by rememberSaveable { mutableStateOf("") }
+    // Estado del correo ingresado
     var correo by rememberSaveable { mutableStateOf("") }
+    // Estado del teléfono ingresado
     var numeroContacto by rememberSaveable { mutableStateOf("") }
+    // Estado del comentario ingresado
     var comentario by rememberSaveable { mutableStateOf("") }
 
-    // Estado para controlar la visualización del resultado
+    // Estado para resultado guardado
     var mensajeEnviado by rememberSaveable { mutableStateOf(false) }
     var rutaArchivoExcel by rememberSaveable { mutableStateOf("") }
     var resultadoUltimoExcel by remember { mutableStateOf<ResultadoExcel?>(null) }
 
+    // Límites de caracteres ingresados
     val limiteComentario = 1000
     val limitenumtelefonico = 9
 
-    // Listado de dominios permitidos
+    // Validación de correos permitidos
     val terminacionesPermitidas = listOf("@gmail.com", "@gmail.cl", "@duocuc.cl", "@duoc.cl")
     val esCorreoValido = correo.isEmpty() || terminacionesPermitidas.any { correo.lowercase().endsWith(it) }
 
-    // Función para procesar el guardado del archivo Excel
+    // Procesa y guarda Excel
     val ejecutarGuardadoExcel = {
         val resultado = GeneradorExcel.guardarFormularioEnExcel(
             context = context,
@@ -69,6 +79,19 @@ fun FormularioScreen() {
             correo = correo,
             numeroContacto = numeroContacto,
             comentario = comentario
+        )
+
+        val fechaActual = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date())
+
+        // Agrega registro al ViewModel
+        viewModel?.agregarContacto(
+            RegistroFormulario(
+                nombre = nombre,
+                correo = correo,
+                numeroContacto = numeroContacto,
+                comentario = comentario,
+                fecha = fechaActual
+            )
         )
 
         if (resultado.exito) {
@@ -90,7 +113,7 @@ fun FormularioScreen() {
         }
     }
 
-    // Gestor de permisos de almacenamiento
+    // Solicita permisos de almacenamiento
     val solicitarPermisosYGuardar = rememberGestorPermisosAlmacenamiento(
         onPermisosConcedidos = {
             ejecutarGuardadoExcel()
@@ -104,11 +127,13 @@ fun FormularioScreen() {
         }
     )
 
+    // Estructura contenedora del formulario
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Formulario de Contacto") })
         }
     ) { innerPadding ->
+        // Columna vertical con campos
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -118,7 +143,7 @@ fun FormularioScreen() {
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
 
-            // 1. Campo Nombre
+            // Campo de texto nombre
             OutlinedTextField(
                 value = nombre,
                 onValueChange = { nombre = it },
@@ -127,7 +152,7 @@ fun FormularioScreen() {
                 singleLine = true
             )
 
-            // 2. Campo Correo con validación de terminación
+            // Campo de texto correo
             OutlinedTextField(
                 value = correo,
                 onValueChange = { correo = it.trim() },
@@ -146,7 +171,7 @@ fun FormularioScreen() {
                 }
             )
 
-            // 3. Campo Número de contacto (Solo permite números)
+            // Campo de texto teléfono
             OutlinedTextField(
                 value = numeroContacto,
                 onValueChange = { nuevoTexto ->
@@ -167,7 +192,7 @@ fun FormularioScreen() {
                 }
             )
 
-            // 4. Campo Comentarios (Máximo 1000 caracteres)
+            // Campo de texto comentarios
             OutlinedTextField(
                 value = comentario,
                 onValueChange = { nuevoTexto ->
@@ -191,7 +216,7 @@ fun FormularioScreen() {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Botón de Enviar y Descargar Excel
+            // Botón enviar y descargar
             Button(
                 onClick = {
                     val correoEsCorrecto = correo.isNotBlank() && terminacionesPermitidas.any { correo.lowercase().endsWith(it) }
@@ -217,7 +242,7 @@ fun FormularioScreen() {
                 Text("Enviar y Descargar Excel")
             }
 
-            // Tarjeta de confirmación con el detalle de la descarga y la ruta del archivo
+            // Tarjeta de confirmación enviada
             if (mensajeEnviado) {
                 Card(
                     colors = CardDefaults.cardColors(
@@ -264,6 +289,7 @@ fun FormularioScreen() {
                         resultadoUltimoExcel?.let { res ->
                             if (res.uri != null) {
                                 Spacer(modifier = Modifier.height(4.dp))
+                                // Botón para abrir archivo
                                 OutlinedButton(
                                     onClick = {
                                         GeneradorExcel.abrirArchivoExcel(context, res)
