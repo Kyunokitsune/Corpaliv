@@ -15,6 +15,9 @@ import com.example.corpaliv.ui.screens.informacion.InfoScreenMediana
 import com.example.corpaliv.ui.screens.registrosscreen.RegistrosScreenCompacta
 import com.example.corpaliv.ui.screens.registrosscreen.RegistrosScreenExpandida
 import com.example.corpaliv.ui.screens.registrosscreen.RegistrosScreenMediana
+import com.example.corpaliv.ui.screens.loginscreen.LoginScreenCompacta
+import com.example.corpaliv.ui.screens.loginscreen.LoginScreenMediana
+import com.example.corpaliv.ui.screens.loginscreen.LoginScreenExpandida
 import com.example.corpaliv.ui.utils.obtenerWindowSizeClass
 import com.example.corpaliv.viewmodel.MainViewModel
 

@@ -83,6 +83,14 @@ fun InfoScreenExpandida(
                         viewModel.navigateTo(Screen.Registros)
                     }
                 )
+                NavigationDrawerItem(
+                    label = { Text("Login Administracion")},
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        viewModel.navigateTo(Screen.Login)
+                    }
+                )
             }
         }
     ) {

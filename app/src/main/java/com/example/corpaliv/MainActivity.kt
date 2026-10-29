@@ -22,6 +22,7 @@ import com.example.corpaliv.ui.screens.ContactoScreen
 import com.example.corpaliv.ui.screens.HomeScreen
 import com.example.corpaliv.ui.screens.InfoScreen
 import com.example.corpaliv.ui.screens.RegistrosScreen
+import com.example.corpaliv.ui.screens.LoginScreen
 import com.example.corpaliv.ui.theme.CorpalivTheme
 import com.example.corpaliv.ui.utils.rememberGestorPermisosAlmacenamiento
 import com.example.corpaliv.viewmodel.MainViewModel
