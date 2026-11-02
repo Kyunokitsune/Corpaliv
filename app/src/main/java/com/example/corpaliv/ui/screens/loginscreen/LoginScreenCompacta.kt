@@ -1,6 +1,7 @@
 package com.example.corpaliv.ui.screens.loginscreen
 
 import android.R
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,6 +42,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -58,6 +60,8 @@ fun LoginScreenCompacta(
     var usuario by remember { mutableStateOf("") }
     var contrasenna by remember { mutableStateOf("")}
     var contrasennaVisible by remember { mutableStateOf(false)}
+
+    val context = LocalContext.current
 
     // Menú de navegación lateral
     ModalNavigationDrawer(
@@ -186,7 +190,17 @@ fun LoginScreenCompacta(
                 )
 
                 Button(
-                    onClick = {},
+                    onClick = {
+                        if (usuario == "admin" && contrasenna == "admin") {
+                            viewModel.navigateTo(Screen.Registros)
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Datos incorrectos",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth().height(50.dp)
                 ) {
                     Text(text = "Ingresar")
