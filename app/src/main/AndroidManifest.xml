@@ -19,7 +19,13 @@
     <!-- Permiso para acceso parcial a fotos/videos seleccionados en Android 14 (API 34) o superior -->
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
+    <!-- Permiso obligatorio para hacer peticiones de red -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+
+
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"

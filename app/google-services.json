@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "830090277507",
+    "project_id": "corpaliv",
+    "storage_bucket": "corpaliv.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830090277507:android:5601ea72de5861bdcae1b6",
+        "android_client_info": {
+          "package_name": "com.example.corpaliv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMQiWrK8dfILta6Ei1_CAPHGvekOAa-b4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

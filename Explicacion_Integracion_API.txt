@@ -1,0 +1,178 @@
+================================================================================
+    MANUAL TECNICO COMPLETO Y GUIA DE ESTUDIO PARA EVALUACION DE ANDROID
+================================================================================
+
+PROYECTO: Corpaliv (Android - Jetpack Compose, Kotlin, Retrofit & Firebase)
+NIVEL: 2do Año Universitario
+
+
+================================================================================
+PARTE 1: EXPLICACION COMPLETA DE LO REALIZADO EN EL PROYECTO
+================================================================================
+
+--------------------------------------------------------------------------------
+1. INTEGRACION DE LA API REST PUBLICA (Retrofit + Gson)
+--------------------------------------------------------------------------------
+
+¿Que es una API REST?
+Una API REST es un servicio web que permite a nuestra aplicacion movil solicitar
+datos a un servidor remoto a traves de peticiones HTTP (GET, POST, PUT, DELETE).
+El servidor responde enviando texto plano en formato JSON (JavaScript Object Notation).
+
+Componentes agregados para la API:
+1. Permisos de Red (AndroidManifest.xml):
+   <uses-permission android:name="android.permission.INTERNET" />
+   Permite al sistema operativo Android autorizar la salida a internet de la app.
+
+2. Data Model DTO (UsuarioApiDto.kt):
+   Clase de datos de Kotlin que traduce el JSON recibido. Usa anotaciones @SerializedName:
+   @SerializedName("name") val nombre: String
+   Mapea la clave "name" del JSON a la variable 'nombre' en Kotlin.
+
+3. Interfaz de Servicios (ApiService.kt):
+   Define los puntos de entrada (endpoints). Usa 'suspend fun' para no bloquear la UI:
+   @GET("users") suspend fun obtenerUsuarios(): List<UsuarioApiDto>
+
+4. Cliente HTTP (RetrofitClient.kt):
+   Objeto Singleton que instancia Retrofit con la URL base "https://jsonplaceholder.typicode.com/"
+   y le vincula GsonConverterFactory para mapear JSON -> Objetos automaticamente.
+
+5. ViewModel (MainViewModel.kt):
+   Maneja el estado mediante la interfaz sellada 'ApiUiState' (Cargando, Exito, Error).
+   Ejecuta la peticion dentro de una Corrutina (viewModelScope.launch).
+
+6. UI en Jetpack Compose (ApiScreen.kt):
+   Reacciona al estado del ViewModel:
+   - Cargando: Muestra CircularProgressIndicator.
+   - Exito: Dibuja una LazyColumn con tarjetas (Card) estilizadas.
+   - Error: Muestra mensaje y boton de "Reintentar".
+
+
+--------------------------------------------------------------------------------
+2. INTEGRACION DE LA BASE DE DATOS EN LA NUBE (Firebase Firestore)
+--------------------------------------------------------------------------------
+
+¿Que es Firebase Firestore?
+Es una base de datos NoSQL alojada en la nube por Google. En lugar de tablas y filas
+(como SQL), organiza los datos en Colecciones (Collections) y Documentos (Documents).
+
+Pasos de instalacion y configuracion realizados:
+1. google-services.json:
+   Archivo descargado de la consola de Firebase. Debe colocarse estrictamente en la
+   raiz del modulo de la app: 'Corpaliv/app/google-services.json'.
+
+2. Plugins y Dependencias Gradle:
+   - Root build.gradle.kts: id("com.google.gms.google-services") version "4.4.2" apply false
+   - App build.gradle.kts:
+     id("com.google.gms.google-services")
+     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+     implementation("com.google.firebase:firebase-firestore")
+
+3. Guardado de Datos en Kotlin (MainViewModel.kt):
+   fun guardarContactoEnBD(nombre: String, email: String) {
+       val db = Firebase.firestore
+       val contacto = hashMapOf("nombre" to nombre, "email" to email)
+       db.collection("contactos")
+           .add(contacto)
+           .addOnSuccessListener { println("Guardado con exito!") }
+           .addOnFailureListener { e -> println("Error: $e") }
+   }
+
+
+================================================================================
+PARTE 2: GUIA DE ESTUDIO EXTENSA PARA EVALUACION DE ANDROID (2do AÑO)
+================================================================================
+
+--------------------------------------------------------------------------------
+CAPITULO 1: ARQUITECTURA MVVM Y JETPACK COMPOSE
+--------------------------------------------------------------------------------
+
+1. ¿Que es el patron MVVM?
+   - M (Model): Capa de datos (DTOs, Repositorios, APIs, Bases de Datos).
+   - V (View): Interfaz de usuario (Componentes @Composable). Solo dibuja la UI.
+   - VM (ViewModel): Intermediario que mantiene el estado de la UI y procesa la
+     logica de negocio. Sobrevive a cambios de configuracion (como rotar la pantalla).
+
+2. Flujo Unidireccional de Datos (UDF - Unidirectional Data Flow):
+   - La View envia EVENTOS o ACCIONES al ViewModel (ej: hacer clic en "Guardar").
+   - El ViewModel procesa la logica y emite un nuevo ESTADO.
+   - La View observa el ESTADO y se redibuja (Recomposicion).
+
+3. Conceptos Claves de Jetpack Compose:
+   - @Composable: Anotacion que marca una funcion como elemento de interfaz grafica.
+   - Recomposicion: Proceso en el que Compose vuelve a ejecutar las funciones
+     @Composable cuyo estado ha cambiado.
+   - StateFlow: Contenedor de estado observable de Kotlin Coroutines.
+   - collectAsStateWithLifecycle(): Extension recomendada para observar StateFlow
+     respetando el ciclo de vida del Fragment/Activity.
+   - remember / mutableStateOf(): Permite a Compose recordar variables locales entre
+     recomposiciones.
+
+
+--------------------------------------------------------------------------------
+CAPITULO 2: ASINCRONIA, CORRUTINAS Y RETROFIT
+--------------------------------------------------------------------------------
+
+1. ¿Por que no se pueden hacer peticiones de red en el Hilo Principal (Main Thread)?
+   Android bloquea las peticiones de red en el hilo principal (UI Thread). Si se
+   permitiera, la pantalla se congelaria totalmente provocando un error ANR
+   (Application Not Responding).
+
+2. Corrutinas de Kotlin:
+   Son hilos ligeros que permiten ejecutar tareas asincronas sin bloquear el hilo UI.
+   - suspend fun: Funcion especial que puede pausarse y reanudarse mas tarde.
+   - viewModelScope.launch: Ambito de corrutina vinculado al ciclo de vida del ViewModel.
+     Se cancela automaticamente si el ViewModel se destruye.
+
+3. Retrofit y DTOs:
+   - Retrofit convierte la interfaz de codigo Kotlin en un cliente HTTP funcional.
+   - DTO (Data Transfer Object): Objeto que sirve para transportar datos entre el
+     servidor y la aplicacion.
+   - @SerializedName("campo_json"): Mapea un campo JSON de nombre diferente al de la
+     variable de Kotlin.
+
+
+--------------------------------------------------------------------------------
+CAPITULO 3: BASE DE DATOS Y PERSISTENCIA (FIREBASE vs ROOM)
+--------------------------------------------------------------------------------
+
+1. Diferencia entre SQL y NoSQL (Firestore):
+   - SQL (Relacional, ej: Room, PostgreSQL): Usa tablas con columnas fijas y relaciones.
+   - NoSQL (Documental, ej: Firestore): Almacena colecciones de documentos JSON sin
+     esquema estricto. Ideal para escalabilidad en la nube.
+
+2. ¿Donde debe ir el archivo 'google-services.json'?
+   Debe ubicarse dentro del directorio 'app/' del proyecto Android (app/google-services.json).
+   No debe ir dentro de 'app/src/'.
+
+3. Operaciones CRUD basicas en Firestore:
+   - Create (Crear): db.collection("coleccion").add(mapaDeDatos)
+   - Read (Leer una vez): db.collection("coleccion").get()
+   - Read (Tiempo real): db.collection("coleccion").addSnapshotListener { ... }
+
+
+--------------------------------------------------------------------------------
+CAPITULO 4: BANCO DE PREGUNTAS TIPO EXAMEN / EVALUACION
+--------------------------------------------------------------------------------
+
+P1: ¿Cual es la funcion principal del ViewModel en una arquitectura MVVM?
+R: Almacenar y administrar los datos relacionados con la UI de forma consciente
+   del ciclo de vida, permitiendo que los datos sobrevivan a cambios de configuracion
+   (como rotar la pantalla del dispositivo).
+
+P2: ¿Para que sirve la anotacion 'suspend' en una funcion de Kotlin?
+R: Indica que la funcion puede ser pausada y reanudada sin bloquear el hilo en el
+   que se ejecuta, permitiendo realizar operaciones asincronas como peticiones de red.
+
+P3: ¿Que ocurre si ejecutas una llamada de red de Retrofit en el Hilo Principal (Main Thread)?
+R: Android arroja una excepcion de tipo NetworkOnMainThreadException y la aplicacion
+   se cierra inesperadamente.
+
+P4: ¿Como reacciona una interfaz en Jetpack Compose cuando cambia un StateFlow?
+R: La pantalla se recompone (Recomposition), redibujando unicamente los componentes
+   @Composable que leen ese estado en particular.
+
+P5: ¿Cual es la diferencia entre un DTO y un Entity de Base de Datos?
+R: El DTO (Data Transfer Object) se utiliza para recibir/enviar datos a traves de una API
+   web, mientras que la Entity es la estructura que se guarda localmente en la base de datos.
+================================================================================

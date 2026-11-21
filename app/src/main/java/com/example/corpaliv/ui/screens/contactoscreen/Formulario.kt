@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,6 +21,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,6 +62,7 @@ fun FormularioScreen(viewModel: MainViewModel? = null) {
 
     // Estado para resultado guardado
     var mensajeEnviado by rememberSaveable { mutableStateOf(false) }
+    var mostrarDialogoExito by rememberSaveable { mutableStateOf(false) }
     var rutaArchivoExcel by rememberSaveable { mutableStateOf("") }
     var resultadoUltimoExcel by remember { mutableStateOf<ResultadoExcel?>(null) }
 
@@ -83,7 +86,7 @@ fun FormularioScreen(viewModel: MainViewModel? = null) {
 
         val fechaActual = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date())
 
-        // Agrega registro al ViewModel
+        // Agrega registro al ViewModel (guarda en lista local y envía automáticamente a Firebase Firestore)
         viewModel?.agregarContacto(
             RegistroFormulario(
                 nombre = nombre,
@@ -98,12 +101,7 @@ fun FormularioScreen(viewModel: MainViewModel? = null) {
             mensajeEnviado = true
             rutaArchivoExcel = resultado.rutaArchivo
             resultadoUltimoExcel = resultado
-
-            Toast.makeText(
-                context,
-                "Excel descargado en: ${resultado.rutaArchivo}",
-                Toast.LENGTH_LONG
-            ).show()
+            mostrarDialogoExito = true // Muestra el diálogo en pantalla
         } else {
             Toast.makeText(
                 context,
@@ -304,6 +302,34 @@ fun FormularioScreen(viewModel: MainViewModel? = null) {
                 }
             }
         }
+    }
+
+    // Diálogo Pop-up en pantalla al enviar con éxito
+    if (mostrarDialogoExito) {
+        AlertDialog(
+            onDismissRequest = { mostrarDialogoExito = false },
+            title = { Text("¡Formulario Enviado!") },
+            text = {
+                Text(
+                    "Gracias $nombre, tus datos han sido enviados a la Base de Datos en la nube y se ha generado tu archivo Excel correctamente.\n\n" +
+                    "📄 Ubicación: $rutaArchivoExcel"
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        mostrarDialogoExito = false
+                        // Limpiar formulario para nuevo ingreso
+                        nombre = ""
+                        correo = ""
+                        numeroContacto = ""
+                        comentario = ""
+                    }
+                ) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }
 

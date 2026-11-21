@@ -90,6 +90,14 @@ fun HomeScreenMediana(
                         viewModel.navigateTo(Screen.Login)
                     }
                 )
+                NavigationDrawerItem(
+                    label = { Text("Ver Usuarios API")},
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        viewModel.navigateTo(Screen.Api)
+                    }
+                )
             }
         }
     ) {
