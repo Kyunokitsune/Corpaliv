@@ -136,13 +136,13 @@ fun HomeScreenCompacta(
                 )
 
                 // Botón interactivo principal
-                Button(onClick = { /* accion futura */ }) {
-                    Text(text = "Presióname")
+                Button(onClick = {viewModel.navigateTo(Screen.Info)}) {
+                    Text(text = "Más información")
                 }
 
                 // Botón interactivo secundario
-                Button(onClick = { /* accion extra */ }) {
-                    Text(text = "Más información")
+                Button(onClick = {viewModel.navigateTo(Screen.Contact)}) {
+                    Text(text = "Contactanos")
                 }
 
                 // Imagen de inicio corporativa
